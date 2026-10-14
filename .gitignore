@@ -1,0 +1,20 @@
+node_modules/
+.env
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+*.zip
+
+# Internal Novartis source material - never publish
+knowldge/
+Html/
+.playwright-mcp/
+# Agent instructions carry internal policy, intranet links and named contacts.
+agent/instructions.voice.md
+agent/instructions.md
+agent/*.local.md
+
+# Brand assets are deployment-specific; the page runs without them.
+public/*.png
+public/*.jpg

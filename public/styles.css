@@ -1,0 +1,792 @@
+:root {
+  color-scheme: light;
+  --bg: #edebe7;
+  --card: #ffffff;
+  --stage: #f4f3f1;
+  --line: #e2e0dc;
+  --accent: #e8601c;
+  --blue: #0460a9;
+  --text: #1b1b1b;
+  --muted: #6e6b66;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Several elements below set an explicit `display`, which would otherwise beat
+   the `hidden` attribute. */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Neue Haas Grotesk Text", "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+.shell {
+  display: flex;
+  height: 100vh;
+  padding: 14px;
+  gap: 12px;
+}
+
+/* ------------------------------------------------------------- icon rail */
+
+.rail {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+
+.rail-btn {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.rail-btn.active {
+  background: var(--text);
+  color: #fff;
+}
+
+.rail-btn svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+/* ----------------------------------------------------------------- frame */
+
+.frame {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 4px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+
+.logo {
+  height: 26px;
+  width: auto;
+}
+
+.titles {
+  padding-left: 18px;
+  border-left: 1px solid var(--line);
+}
+
+.titles h1 {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 1px 0 0;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-size: 0.74rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pill .pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.pill.info {
+  background: #e6f1fb;
+  border-color: #c3dcf3;
+  color: var(--blue);
+}
+
+/* ------------------------------------------------------------------ grid */
+
+.grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  /* The avatar is the main attraction, so it gets the most width. */
+  grid-template-columns: minmax(320px, 1.45fr) minmax(0, 1fr) 232px;
+  gap: 12px;
+}
+
+.stage-card,
+.convo {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  min-height: 0;
+}
+
+.stage-card {
+  padding: 10px;
+}
+
+.convo {
+  padding: 30px 34px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------------ stage */
+
+.stage {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--stage);
+  border-radius: 10px;
+}
+
+.avatar {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar video,
+.avatar canvas {
+  width: 100%;
+  height: 100%;
+  /* Standing presenters sit in a 16:9 frame with wide empty margins, so fill the
+     block and crop the sides. Anchored high to keep the face in view. */
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* Stand-in shown until the live stream arrives. A local image costs nothing,
+   where a live avatar bills per second from the moment it connects. */
+.poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* Session status, top-left of the stage. app.js rewrites this element's entire
+   className, so it can only ever carry `status` plus one state word. */
+.status {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(6px);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.status::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status.live {
+  color: #1a7f45;
+}
+
+.status.error {
+  color: #c23b3b;
+}
+
+.chip-hd {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(6px);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* ----------------------------------------------------------- conversation */
+
+.eyebrow {
+  margin: 0 0 14px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.placeholder {
+  margin-bottom: 22px;
+}
+
+.headline {
+  margin-bottom: 22px;
+}
+
+.headline h2 {
+  margin: 0;
+  /* Deliberately quieter than the avatar: this used to be the loudest thing on
+     the page and pulled attention off the stage. */
+  font-size: 1.45rem;
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+}
+
+.headline-desc {
+  margin: 8px 0 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.headline em {
+  font-style: normal;
+  color: var(--text);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+/* Waveform: decorative, and only animates while a session is live. */
+.wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 26px;
+  margin: 22px 0;
+}
+
+.wave span {
+  flex: 1 1 auto;
+  height: 3px;
+  border-radius: 2px;
+  background: #d9d6d1;
+}
+
+body:has(.status.live) .wave span {
+  background: var(--accent);
+  animation: bounce 1.1s ease-in-out infinite;
+}
+
+.wave span:nth-child(3n) {
+  animation-delay: 0.15s;
+}
+.wave span:nth-child(3n + 1) {
+  animation-delay: 0.3s;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    height: 3px;
+    opacity: 0.5;
+  }
+  50% {
+    height: 20px;
+    opacity: 1;
+  }
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: auto;
+}
+
+.ctl {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 19px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-size: 0.82rem;
+  font-family: inherit;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.ctl svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+}
+
+.ctl:hover {
+  border-color: var(--muted);
+}
+
+.ctl.active {
+  border-color: var(--text);
+}
+
+.ctl.mic {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  font-weight: 600;
+}
+
+/* app.js swaps this label to 'Resume mic' and adds .muted when the mic is paused. */
+.ctl.mic.muted {
+  border-color: var(--line);
+  box-shadow: none;
+  color: var(--muted);
+}
+
+.ctl.end {
+  margin-left: auto;
+  background: var(--text);
+  border-color: var(--text);
+  color: #fff;
+}
+
+.ctl[aria-expanded='true'] {
+  border-color: var(--text);
+}
+
+.ctl:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* ------------------------------------------------------- full screen mode */
+
+/* The avatar fills the screen and the controls float over it, so everything
+   needed to get back out stays reachable. */
+.frame:fullscreen {
+  padding: 0;
+  gap: 0;
+  background: var(--stage);
+}
+
+.frame:fullscreen .topbar,
+.frame:fullscreen .insights,
+.frame:fullscreen .eyebrow,
+.frame:fullscreen .headline,
+.frame:fullscreen .transcript {
+  display: none;
+}
+
+.frame:fullscreen .grid {
+  position: relative;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.frame:fullscreen .stage-card {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.frame:fullscreen .stage {
+  border-radius: 0;
+}
+
+/* Presenting to a room - show the whole figure rather than a crop. */
+.frame:fullscreen .avatar video,
+.frame:fullscreen .avatar canvas {
+  object-fit: contain;
+  object-position: center;
+}
+
+.frame:fullscreen .convo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  align-items: center;
+  padding: 0 0 34px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.frame:fullscreen .caption,
+.frame:fullscreen .wave {
+  width: min(760px, 72vw);
+}
+
+.frame:fullscreen .caption {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+}
+
+.frame:fullscreen .controls {
+  margin-top: 0;
+  justify-content: center;
+}
+
+.frame:fullscreen .ctl {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+}
+
+.frame:fullscreen .ctl.end {
+  margin-left: 0;
+  background: var(--text);
+}
+
+/* ---------------------------------------------------------- right panel */
+
+.insights {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.panel-head {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.kpi {
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: var(--stage);
+}
+
+.kpi strong {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.kpi span {
+  font-size: 0.66rem;
+  line-height: 1.3;
+  color: var(--muted);
+}
+
+.pref {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.pref input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pref .sw {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 19px;
+  border-radius: 999px;
+  background: #d9d6d1;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.pref .sw::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s;
+}
+
+.pref input:checked ~ .sw {
+  background: var(--accent);
+}
+
+.pref input:checked ~ .sw::after {
+  transform: translateX(15px);
+}
+
+.pref input:disabled ~ .sw {
+  opacity: 0.55;
+}
+
+/* -------------------------------------------------- conversation state chip */
+
+.state {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(6px);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.state .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex: 0 0 auto;
+}
+
+.state.listening .dot {
+  background: #1a7f45;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.state.thinking .dot {
+  background: #c98a00;
+  animation: pulse 0.9s ease-in-out infinite;
+}
+
+.state.speaking .dot {
+  background: var(--accent);
+  animation: pulse 1.1s ease-in-out infinite;
+}
+
+/* No pulse: the point is that nothing is being heard. */
+.state.muted .dot {
+  background: #c98a00;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.75);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .state .dot {
+    animation: none !important;
+  }
+}
+
+/* -------------------------------------------------------------- captions */
+
+/* Every box below the headline is a fixed size. Text streams in a line at a
+   time, and anything that resized with it dragged the controls up and down. */
+.caption {
+  flex: 0 0 auto;
+  padding: 15px 18px;
+  border-left: 3px solid var(--accent);
+  background: var(--stage);
+  border-radius: 0 10px 10px 0;
+}
+
+body.no-captions .caption {
+  display: none;
+}
+
+.caption-label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.caption-user {
+  margin: 0 0 6px;
+  /* One line, always: it echoes the question, and wrapping it would move
+     everything underneath. */
+  height: 1.35em;
+  line-height: 1.35;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.caption-user:not(:empty)::before {
+  content: 'You: ';
+}
+
+.caption-text {
+  margin: 0;
+  /* Three lines, always; JS keeps it scrolled to the newest text. */
+  height: 4.35em;
+  overflow: hidden;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: 1.45fr 1fr;
+  }
+
+  .insights {
+    display: none;
+  }
+
+  .headline h2 {
+    font-size: 1.25rem;
+  }
+}
+
+/* ------------------------------------------------------------- transcript */
+
+.transcript {
+  /* Fixed height rather than max-height: growing a line at a time moved
+     everything above it. Allowed to shrink so it cannot overrun the card. */
+  flex: 0 1 auto;
+  height: 26vh;
+  min-height: 90px;
+  margin-top: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--stage);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transcript[hidden] {
+  display: none;
+}
+
+.line {
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  max-width: 85%;
+  white-space: pre-wrap;
+}
+
+.line.user {
+  align-self: flex-end;
+  background: #e3e9f2;
+}
+
+.line.assistant {
+  align-self: flex-start;
+  background: #fff;
+}
+
+.line.system {
+  align-self: center;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.line.error {
+  align-self: center;
+  background: #fae3e3;
+  color: #a33;
+}
